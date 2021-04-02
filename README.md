@@ -9,3 +9,5 @@ The first argument need to be th input video file, and the second argument can b
 
 If the output file is left out, it will be put into the same directory, that the input file is located in.\
 For example, `python3 main.py ~/Videos/film.mp4` will result in the output file having the path of *~/Videos/film.mp4.png*.
+
+### This does require FFMpeg to be installed on your system.
