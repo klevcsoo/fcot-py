@@ -1,6 +1,7 @@
 import sys
 import os
 import time
+import multiprocessing
 from subprocess import check_output
 from shutil import rmtree
 from PIL import Image, ImageFilter
@@ -33,6 +34,30 @@ if not os.path.exists(input_path):
 # GETTING DURATION AND CALCULATING EXTRACTION RATE
 duration = float(check_output(f'ffprobe -i {input_path} -show_format -loglevel panic | grep duration', shell=True).decode('UTF-8')[9:])
 rate = duration / TARGET_WIDTH
+
+
+# WATCHING WORK DIRECTORY TO UPDATE PROGRESS ----
+# I don't fully understand why it has to be like this,
+# but it does work this way
+def update_progress():
+    try:
+        while True:
+            seconds_done = len([f for _, _, f in os.walk(WORK_DIR)][0]) * rate
+            percentage = int(100 * (seconds_done / duration))
+            print(f'\r{int(seconds_done)} out of {int(duration)} ({percentage}%)', end='')
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print()
+        pass
+
+
+progress_update_thread = multiprocessing.Process(target=update_progress)
+try:
+    progress_update_thread.start()
+except:
+    progress_update_thread.terminate()
+    print()
+# -----------------------------------------------
 
 # EXTRACTING FRAMES
 print(f'[INFO] Getting a frame every {rate} seconds')
