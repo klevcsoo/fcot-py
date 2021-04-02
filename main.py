@@ -42,6 +42,7 @@ extracted_files = [f for _, _, f in os.walk(WORK_DIR)][0]
 extracted_files.sort()
 
 # CALCULATING THE AVERAGE COLOUR IN EACH OF THE FRAMES
+print('[INFO] Calculating colours')
 colours = []
 for filename in extracted_files:
     img = Image.open(f'{WORK_DIR}/{filename}')
@@ -55,6 +56,7 @@ out_img = Image.new('RGB', (actual_width, OUTPUT_HEIGHT))
 out_img.putdata(colours * OUTPUT_HEIGHT)
 out_img.save(output_path)
 out_img.close()
+print(f'[Info] Done! The path of the output file is {output_path}.')
 
 # REMOVING TEMP DIRECTORY
 rmtree(WORK_DIR)
