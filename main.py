@@ -8,6 +8,7 @@ from PIL import Image, ImageFilter
 # CONFIG
 TARGET_WIDTH = 2000
 OUTPUT_HEIGHT = 500
+WORK_DIR = '.temp'
 
 # CHECKING INPUT ARGUMENT
 if len(sys.argv) < 2:
@@ -19,9 +20,9 @@ input_path = sys.argv[1]
 output_path = sys.argv[2] if len(sys.argv) > 2 else f'{input_path}.png'
 
 # EMPTYING TEMP DIRECTORY
-if os.path.isdir('temp'):
-    rmtree('temp')
-os.makedirs('temp')
+if os.path.isdir(WORK_DIR):
+    rmtree(WORK_DIR)
+os.makedirs(WORK_DIR)
 
 # CHECKING INPUT FILE EXISTANCE
 if not os.path.exists(input_path):
@@ -34,16 +35,16 @@ rate = duration / TARGET_WIDTH
 
 # EXTRACTING FRAMES
 print(f'[INFO] Getting a frame every {rate} seconds')
-os.system(f'ffmpeg -loglevel fatal -i {input_path} -s 100x100 -r 1/{rate} temp/frame%03d.bmp')
+os.system(f'ffmpeg -loglevel fatal -i {input_path} -s 100x100 -r 1/{rate} {WORK_DIR}/frame%03d.bmp')
 
 # COLLECTING EXTRACTED FRAMES, AND SORTING THEM
-extracted_files = [f for _, _, f in os.walk('temp')][0]
+extracted_files = [f for _, _, f in os.walk(WORK_DIR)][0]
 extracted_files.sort()
 
 # CALCULATING THE AVERAGE COLOUR IN EACH OF THE FRAMES
 colours = []
 for filename in extracted_files:
-    img = Image.open(f'temp/{filename}')
+    img = Image.open(f'{WORK_DIR}/{filename}')
     img.filter(ImageFilter.GaussianBlur(100))
     colours.append(img.getpixel((50, 50)))
     img.close()
@@ -56,4 +57,4 @@ out_img.save(output_path)
 out_img.close()
 
 # REMOVING TEMP DIRECTORY
-rmtree('temp')
+rmtree(WORK_DIR)
