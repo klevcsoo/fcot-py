@@ -54,3 +54,6 @@ out_img = Image.new('RGB', (actual_width, OUTPUT_HEIGHT))
 out_img.putdata(colours * OUTPUT_HEIGHT)
 out_img.save(output_path)
 out_img.close()
+
+# REMOVING TEMP DIRECTORY
+rmtree('temp')
