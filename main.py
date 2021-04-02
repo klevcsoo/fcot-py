@@ -65,6 +65,9 @@ start_time = time.time()
 os.system(f'ffmpeg -loglevel fatal -i {input_path} -s 100x100 -r 1/{rate} {WORK_DIR}/frame%03d.bmp')
 work_time = round(time.time() - start_time)
 
+# STOP PROGRESS LOGGING PROCESS
+progress_update_thread.terminate()
+
 # COLLECTING EXTRACTED FRAMES, AND SORTING THEM
 extracted_files = [f for _, _, f in os.walk(WORK_DIR)][0]
 extracted_files.sort()
