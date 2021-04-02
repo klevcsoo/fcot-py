@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 from subprocess import check_output
 from shutil import rmtree
 from PIL import Image, ImageFilter
@@ -35,7 +36,9 @@ rate = duration / TARGET_WIDTH
 
 # EXTRACTING FRAMES
 print(f'[INFO] Getting a frame every {rate} seconds')
+start_time = time.time()
 os.system(f'ffmpeg -loglevel fatal -i {input_path} -s 100x100 -r 1/{rate} {WORK_DIR}/frame%03d.bmp')
+work_time = round(time.time() - start_time)
 
 # COLLECTING EXTRACTED FRAMES, AND SORTING THEM
 extracted_files = [f for _, _, f in os.walk(WORK_DIR)][0]
@@ -56,7 +59,8 @@ out_img = Image.new('RGB', (actual_width, OUTPUT_HEIGHT))
 out_img.putdata(colours * OUTPUT_HEIGHT)
 out_img.save(output_path)
 out_img.close()
-print(f'[Info] Done! The path of the output file is {output_path}.')
+print(f'[INFO] Done! Work time: {work_time} seconds')
+print(f'[INFO] Output file: {output_path}.')
 
 # REMOVING TEMP DIRECTORY
 rmtree(WORK_DIR)
