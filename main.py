@@ -44,8 +44,7 @@ def update_progress():
         while True:
             seconds_done = len([f for _, _, f in os.walk(WORK_DIR)][0]) * rate
             percentage = int(100 * (seconds_done / duration))
-            print(f'\r{int(seconds_done)} out of {int(duration)} ({percentage}%)', end='')
-            time.sleep(1)
+            time.sleep(0.5)
     except KeyboardInterrupt:
         print()
         pass
