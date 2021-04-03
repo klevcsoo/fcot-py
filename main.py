@@ -67,6 +67,7 @@ work_time = round(time.time() - start_time)
 
 # STOP PROGRESS LOGGING PROCESS
 progress_update_thread.terminate()
+print()
 
 # COLLECTING EXTRACTED FRAMES, AND SORTING THEM
 extracted_files = [f for _, _, f in os.walk(WORK_DIR)][0]
