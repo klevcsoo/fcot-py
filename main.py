@@ -56,7 +56,6 @@ try:
     progress_update_thread.start()
 except:
     progress_update_thread.terminate()
-    print()
 # -----------------------------------------------
 
 # EXTRACTING FRAMES
@@ -74,13 +73,17 @@ extracted_files = [f for _, _, f in os.walk(WORK_DIR)][0]
 extracted_files.sort()
 
 # CALCULATING THE AVERAGE COLOUR IN EACH OF THE FRAMES
-print('[INFO] Calculating colours')
+print('\r[INFO] Calculating colours', end='')
 colours = []
 for filename in extracted_files:
     img = Image.open(f'{WORK_DIR}/{filename}')
     img.filter(ImageFilter.GaussianBlur(100))
     colours.append(img.getpixel((50, 50)))
     img.close()
+
+    percentage = int((len(colours) / len(extracted_files)) * 100)
+    print(f'\r[INFO] Calculating colours ({percentage}%)', end='')
+print('\n', end='')
 
 # CREATING OUTPUT PICTURE BASED ON COLOUR DATA
 actual_width = len(colours)  # should be equal to TARGET_WIDTH, but you never know
