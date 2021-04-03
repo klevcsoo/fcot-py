@@ -12,9 +12,16 @@ TARGET_WIDTH = 2000
 OUTPUT_HEIGHT = 500
 WORK_DIR = '.temp'
 
+
+class OutColours:
+    WARNING = '\033[93m'
+    ERROR = '\033[91m'
+    END = '\033[0m'
+
+
 # CHECKING INPUT ARGUMENT
 if len(sys.argv) < 2:
-    print('[ERROR] Missing argument: input file')
+    print(f'{OutColours.ERROR}[ERROR] Missing argument: input file{OutColours.END}')
     exit(1)
 
 # DEFINING INPUT AND OUTPUT
@@ -28,7 +35,7 @@ os.makedirs(WORK_DIR)
 
 # CHECKING INPUT FILE EXISTANCE
 if not os.path.exists(input_path):
-    print('[ERROR] Input file does not exist')
+    print(f'{OutColours.ERROR}[ERROR] Input file does not exist{OutColours.END}')
     exit(1)
 
 # GETTING DURATION AND CALCULATING EXTRACTION RATE
@@ -47,7 +54,7 @@ def update_progress():
             print(f'\r[INFO] {int(seconds_done)} out of {int(duration)} ({percentage}%)', end='')
             time.sleep(0.5)
     except KeyboardInterrupt:
-        print('\n[WARN] Extraction aborted')
+        print(f'{OutColours.WARNING}\n[WARN] Extraction aborted{OutColours.END}', end='')
         pass
 
 
