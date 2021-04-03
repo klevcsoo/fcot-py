@@ -13,6 +13,7 @@ OUTPUT_HEIGHT = 500
 WORK_DIR = '.temp'
 
 
+# ✨FANCY✨ CONSOLE OUTPUT COLOURS
 class OutColours:
     WARNING = '\033[93m'
     ERROR = '\033[91m'
