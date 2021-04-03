@@ -38,6 +38,7 @@ os.makedirs(WORK_DIR)
 if not os.path.exists(input_path):
     print(f'{OutColours.ERROR}[ERROR] Input file does not exist{OutColours.END}')
     exit(1)
+print(f'[INFO] Input file: {input_path}')
 
 # GETTING DURATION AND CALCULATING EXTRACTION RATE
 duration = float(check_output(f'ffprobe -i {input_path} -show_format -loglevel panic | grep duration', shell=True).decode('UTF-8')[9:])
@@ -52,7 +53,7 @@ def update_progress():
         while True:
             seconds_done = len([f for _, _, f in os.walk(WORK_DIR)][0]) * rate
             percentage = int(100 * (seconds_done / duration))
-            print(f'\r[INFO] {int(seconds_done)} out of {int(duration)} ({percentage}%)', end='')
+            print(f'\r[INFO] Extracting frames ({percentage}%)', end='')
             time.sleep(0.5)
     except KeyboardInterrupt:
         print(f'{OutColours.WARNING}\n[WARN] Extraction aborted{OutColours.END}', end='')
@@ -67,7 +68,7 @@ except:
 # -----------------------------------------------
 
 # EXTRACTING FRAMES
-print(f'[INFO] Getting a frame every {rate} seconds')
+print(f'\r[INFO] Extracting frames', end='')
 start_time = time.time()
 os.system(f'ffmpeg -loglevel fatal -i {input_path} -s 100x100 -r 1/{rate} {WORK_DIR}/frame%03d.bmp')
 work_time = round(time.time() - start_time)
@@ -100,7 +101,7 @@ out_img.putdata(colours * OUTPUT_HEIGHT)
 out_img.save(output_path)
 out_img.close()
 print(f'[INFO] Done! Work time: {work_time} seconds')
-print(f'[INFO] Output file: {output_path}.')
+print(f'[INFO] Output file: {output_path}')
 
 # REMOVING TEMP DIRECTORY
 rmtree(WORK_DIR)
