@@ -49,19 +49,21 @@ rate = duration / TARGET_WIDTH
 # WATCHING WORK DIRECTORY TO UPDATE PROGRESS ----
 # I don't fully understand why it has to be like this,
 # but it does work this way
-def update_progress():
+def update_progress(start_time: float):
     try:
         while True:
             seconds_done = len([f for _, _, f in os.walk(WORK_DIR)][0]) * rate
-            percentage = int(100 * (seconds_done / duration))
-            print(f'\r[INFO] Extracting frames ({percentage}%)', end='')
+            percentage = round(100 * (seconds_done / duration), 1)
+            time_elapsed = datetime.timedelta(seconds=int(time.time() - start_time))
+            print(f'\r[INFO] Extracting frames ({percentage}%) {time_elapsed}', end='')
             time.sleep(0.5)
     except KeyboardInterrupt:
-        print(f'{OutColours.WARNING}\n[WARN] Extraction aborted{OutColours.END}', end='')
+        print(f'{OutColours.WARNING}\n[WARN] Extraction aborted{""*10}{OutColours.END}', end='')
         pass
 
 
-progress_update_thread = multiprocessing.Process(target=update_progress)
+start_time = time.time()
+progress_update_thread = multiprocessing.Process(target=update_progress, args=[start_time])
 try:
     progress_update_thread.start()
 except:
@@ -70,7 +72,6 @@ except:
 
 # EXTRACTING FRAMES
 print(f'\r[INFO] Extracting frames', end='')
-start_time = time.time()
 os.system(f'ffmpeg -loglevel fatal -i {input_path} -s 100x100 -r 1/{rate} {WORK_DIR}/frame%03d.bmp')
 work_time = round(time.time() - start_time)
 
