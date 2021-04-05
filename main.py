@@ -1,6 +1,7 @@
 import sys
 import os
 import time
+import datetime
 import multiprocessing
 from subprocess import check_output
 from shutil import rmtree
@@ -100,7 +101,7 @@ out_img = Image.new('RGB', (actual_width, OUTPUT_HEIGHT))
 out_img.putdata(colours * OUTPUT_HEIGHT)
 out_img.save(output_path)
 out_img.close()
-print(f'[INFO] Done! Work time: {work_time} seconds')
+print(f'[INFO] Done! Work time: {str(datetime.timedelta(seconds=work_time))}')
 print(f'[INFO] Output file: {output_path}')
 
 # REMOVING TEMP DIRECTORY
