@@ -66,8 +66,16 @@ start_time = time.time()
 progress_update_thread = multiprocessing.Process(target=update_progress, args=[start_time])
 try:
     progress_update_thread.start()
-except:
+except RuntimeError:
+    try:
     progress_update_thread.terminate()
+    except AttributeError:
+        pass
+    except Exception as e:
+        print(f'{OutColours.ERROR}[ERROR] Runtime error: {e}{OutColours.END}')
+except Exception as e:
+    print(f'{OutColours.ERROR}[ERROR] Runtime error: {e}{OutColours.END}')
+
 # -----------------------------------------------
 
 # EXTRACTING FRAMES
