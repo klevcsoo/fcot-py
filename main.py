@@ -68,7 +68,7 @@ try:
     progress_update_thread.start()
 except RuntimeError:
     try:
-    progress_update_thread.terminate()
+        progress_update_thread.terminate()
     except AttributeError:
         pass
     except Exception as e:
@@ -114,4 +114,4 @@ print(f'[INFO] Done! Work time: {str(datetime.timedelta(seconds=work_time))}')
 print(f'[INFO] Output file: {output_path}')
 
 # REMOVING TEMP DIRECTORY
-rmtree(WORK_DIR)
+rmtree(WORK_DIR, ignore_errors=True)
