@@ -42,7 +42,8 @@ if not os.path.exists(input_path):
 print(f'[INFO] Input file: {input_path}')
 
 # GETTING DURATION AND CALCULATING EXTRACTION RATE
-duration = float(check_output(f'ffprobe -i {input_path} -show_format -loglevel panic | grep duration', shell=True).decode('UTF-8')[9:])
+duration_cmd = f'ffprobe -i {input_path} -show_format -loglevel panic | grep duration'
+duration = float(check_output(duration_cmd, shell=True).decode('UTF-8')[9:])
 rate = duration / TARGET_WIDTH
 
 
