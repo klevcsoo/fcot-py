@@ -35,7 +35,7 @@ if os.path.isdir(WORK_DIR):
     rmtree(WORK_DIR)
 os.makedirs(WORK_DIR)
 
-# CHECKING INPUT FILE EXISTANCE
+# CHECKING INPUT FILE EXISTENCE
 if not os.path.exists(input_path):
     print(f'{OutColours.ERROR}[ERROR] Input file does not exist{OutColours.END}')
     exit(1)
