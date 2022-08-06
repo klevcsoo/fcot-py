@@ -3,6 +3,8 @@ import os
 import time
 import datetime
 import multiprocessing
+from tkinter.ttk import Progressbar
+import progressbar
 from subprocess import check_output
 from shutil import rmtree
 from PIL import Image, ImageFilter
@@ -50,21 +52,23 @@ rate = duration / TARGET_WIDTH
 # WATCHING WORK DIRECTORY TO UPDATE PROGRESS ----
 # I don't fully understand why it has to be like this,
 # but it does work this way
-def update_progress(start_time: float):
+def update_progress(start_time: float, pbar=Progressbar):
     try:
         while True:
             seconds_done = len([f for _, _, f in os.walk(WORK_DIR)][0]) * rate
             percentage = round(100 * (seconds_done / duration), 1)
-            time_elapsed = datetime.timedelta(seconds=int(time.time() - start_time))
-            print(f'\r[INFO] Extracting frames ({percentage}%) {time_elapsed}', end='')
+            pbar.update(percentage)
             time.sleep(0.5)
     except KeyboardInterrupt:
-        print(f'{OutColours.WARNING}\n[WARN] Extraction aborted{""*10}{OutColours.END}', end='')
-        pass
+        print(f'{OutColours.WARNING}\n[WARN] Extraction aborted{OutColours.END}')
 
 
 start_time = time.time()
-progress_update_thread = multiprocessing.Process(target=update_progress, args=[start_time])
+print('[INFO] Extracting frames...')
+epbar = progressbar.ProgressBar(maxval=100).start()
+if sys.platform == 'darwin':
+    multiprocessing.set_start_method('fork')
+progress_update_thread = multiprocessing.Process(target=update_progress, args=[start_time, epbar])
 try:
     progress_update_thread.start()
 except RuntimeError:
@@ -80,20 +84,24 @@ except Exception as e:
 # -----------------------------------------------
 
 # EXTRACTING FRAMES
-print(f'\r[INFO] Extracting frames', end='')
-os.system(f'ffmpeg -loglevel fatal -i {input_path} -s 100x100 -r 1/{rate} {WORK_DIR}/frame%03d.bmp')
+ext_cmd = f'ffmpeg -loglevel fatal -i {input_path} -s 100x100 -r 1/{rate} {WORK_DIR}/frame%03d.bmp'
+ext_cmd_return_val = os.system(ext_cmd)
 work_time = round(time.time() - start_time)
 
 # STOP PROGRESS LOGGING PROCESS
 progress_update_thread.terminate()
-print()
+if ext_cmd_return_val == 0:
+    epbar.finish()
+else:
+    exit(0)
 
 # COLLECTING EXTRACTED FRAMES, AND SORTING THEM
 extracted_files = [f for _, _, f in os.walk(WORK_DIR)][0]
 extracted_files.sort()
 
 # CALCULATING THE AVERAGE COLOUR IN EACH OF THE FRAMES
-print('\r[INFO] Calculating colours', end='')
+print('[INFO] Calculating colours...')
+cpbar = progressbar.ProgressBar(maxval=100).start()
 colours = []
 for filename in extracted_files:
     img = Image.open(f'{WORK_DIR}/{filename}')
@@ -102,8 +110,8 @@ for filename in extracted_files:
     img.close()
 
     percentage = int((len(colours) / len(extracted_files)) * 100)
-    print(f'\r[INFO] Calculating colours ({percentage}%)', end='')
-print('\n', end='')
+    cpbar.update(percentage)
+cpbar.finish()
 
 # CREATING OUTPUT PICTURE BASED ON COLOUR DATA
 actual_width = len(colours)  # should be equal to TARGET_WIDTH, but you never know
