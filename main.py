@@ -3,7 +3,6 @@ import os
 import time
 import datetime
 import multiprocessing
-from tkinter.ttk import Progressbar
 import progressbar
 from subprocess import check_output
 from shutil import rmtree
@@ -52,7 +51,7 @@ rate = duration / TARGET_WIDTH
 # WATCHING WORK DIRECTORY TO UPDATE PROGRESS ----
 # I don't fully understand why it has to be like this,
 # but it does work this way
-def update_progress(start_time: float, pbar=Progressbar):
+def update_progress(start_time: float, pbar=progressbar.ProgressBar):
     try:
         while True:
             seconds_done = len([f for _, _, f in os.walk(WORK_DIR)][0]) * rate
